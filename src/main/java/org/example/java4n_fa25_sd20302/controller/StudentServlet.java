@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "StudentServlet", value = {
-        "/students"
+        "/students",
+        "/students/new",
+        "/students/insert"
 })
 public class StudentServlet extends HttpServlet {
 
@@ -26,7 +28,44 @@ public class StudentServlet extends HttpServlet {
             case "/students":
                 listStudents(request, response);
                 break;
+            case "/students/new":
+                showNewForm(request, response);
+                break;
+            case "/students/insert":
+                insertStudent(request, response);
+                break;
         }
+    }
+
+    private void insertStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // read student info from form
+        Student student = getStudentFromForm(request);
+
+        // save student to DB
+        studentService.addStudent(student);
+
+        // show table
+        response.sendRedirect("/students");
+    }
+
+    private Student getStudentFromForm(HttpServletRequest request) {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+
+        return new Student(id, name, email, phone);
+
+    }
+
+    private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        getServletContext()
+                .getRequestDispatcher("/views/addStudentForm.jsp")
+                .forward(request, response);
+
     }
 
     private void listStudents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -42,6 +81,6 @@ public class StudentServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        doGet(request, response);
     }
 }

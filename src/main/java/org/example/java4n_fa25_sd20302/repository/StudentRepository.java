@@ -18,4 +18,11 @@ public class StudentRepository {
             return em.createQuery("select s from Student s", Student.class).getResultList();
 
     }
+
+    public void addStudent(Student student) {
+
+            em.getTransaction().begin();
+            em.persist(student);
+            em.getTransaction().commit();
+    }
 }
