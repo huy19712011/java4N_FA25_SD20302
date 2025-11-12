@@ -18,4 +18,19 @@ public class StudentService {
 
         studentRepository.addStudent(student);
     }
+
+    public void deleteStudent(long id) {
+
+        studentRepository.deleteStudent(id);
+    }
+
+    public Student getStudentById(Long id) {
+
+        return studentRepository.getStudentById(id);
+    }
+
+    public void updateStudent(Student student) {
+
+        studentRepository.updateStudent(student);
+    }
 }
