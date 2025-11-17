@@ -3,6 +3,7 @@ package org.example.java4n_fa25_sd20302.controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.example.java4n_fa25_sd20302.entity.Category;
 import org.example.java4n_fa25_sd20302.entity.Product;
 import org.example.java4n_fa25_sd20302.service.CategoryService;
 import org.example.java4n_fa25_sd20302.service.ProductService;
@@ -12,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "ProductServlet", value = {
-        "/products"
+        "/products",
+        "/products/new",
+        "/products/insert"
 })
 public class ProductServlet extends HttpServlet {
 
@@ -28,7 +31,48 @@ public class ProductServlet extends HttpServlet {
             case "/products":
                 listProducts(request, response);
                 break;
+            case "/products/new":
+                showNewForm(request, response);
+                break;
+            case "/products/insert":
+                insertProduct(request, response);
+                break;
         }
+    }
+
+    private void insertProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // read product info from form
+        Product product = getProductFromForm(request);
+
+        // save to DB
+        productService.addProduct(product);
+
+        // return view
+        response.sendRedirect("/products");
+    }
+
+    private Product getProductFromForm(HttpServletRequest request) {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+        String name = request.getParameter("name");
+        Long categoryId = Long.parseLong(request.getParameter("category_id"));
+        Category category = categoryService.getCategoryById(categoryId);
+
+        Product product = new Product(id, name);
+        product.setCategory(category);
+
+        return product;
+    }
+
+    private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        List<Category> categories = categoryService.getCategories();
+
+        request.setAttribute("categories", categories);
+
+        request.getRequestDispatcher("/views/addProductForm.jsp")
+                .forward(request, response);
     }
 
     private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

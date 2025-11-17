@@ -16,4 +16,11 @@ public class ProductRepository {
 
         return em.createQuery("select p from Product p", Product.class).getResultList();
     }
+
+    public void addProduct(Product product) {
+
+        em.getTransaction().begin();
+        em.persist(product);
+        em.getTransaction().commit();
+    }
 }

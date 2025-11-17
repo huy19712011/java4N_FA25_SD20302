@@ -6,12 +6,14 @@
 </head>
 <body>
 <h2>Products</h2>
+<a href="/products/new">Add</a>
 <table border="1">
     <tr>
         <th>#</th>
         <th>Id</th>
         <th>Name</th>
         <th>Category</th>
+        <th>Actions</th>
     </tr>
     <c:forEach var="tempProduct" items="${products}" varStatus="i">
         <tr>
@@ -19,6 +21,10 @@
             <td>${tempProduct.id}</td>
             <td>${tempProduct.name}</td>
             <td>${tempProduct.category.name}</td>
+            <td>
+                <a href="/products/edit?id=${tempProduct.id}">Edit</a>
+                <a href="/products/delete?id=${tempProduct.id}">Delete</a>
+            </td>
         </tr>
     </c:forEach>
 </table>
