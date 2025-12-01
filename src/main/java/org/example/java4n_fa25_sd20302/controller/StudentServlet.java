@@ -5,6 +5,8 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import org.example.java4n_fa25_sd20302.entity.Student;
 import org.example.java4n_fa25_sd20302.service.StudentService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +18,9 @@ import java.util.List;
         "/students/insert",
         "/students/delete",
         "/students/edit",
-        "/students/update"
+        "/students/update",
+        "/students/saveStudent",
+        "/students/showStudents"
 })
 public class StudentServlet extends HttpServlet {
 
@@ -46,7 +50,42 @@ public class StudentServlet extends HttpServlet {
             case "/students/update":
                 updateStudent(request, response);
                 break;
+            case "/students/saveStudent":
+                saveStudent(request, response);
+                break;
+            case "/students/showStudents":
+                showStudents(request, response);
+                break;
         }
+    }
+
+    private void showStudents(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        List<Student> students = studentService.getStudents();
+
+        JSONArray jsonArray = new JSONArray(students);
+
+        response.setContentType("application/json");
+        response.getWriter().write(jsonArray.toString());
+    }
+
+    private void saveStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        Student student = new Student(id, name, email, phone);
+        studentService.addStudent(student);
+
+        JSONObject json = new JSONObject();
+        json.put("id", student.getId());
+        json.put("name", student.getName());
+        json.put("email", student.getEmail());
+        json.put("phone", student.getPhone());
+
+        response.setContentType("application/json");
+        response.getWriter().write(json.toString());
     }
 
     private void updateStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
